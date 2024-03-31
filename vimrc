@@ -272,6 +272,7 @@ command! FixWhitespace :%s/\s\+$//e
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
+
 if !exists('*s:setupWrapping')
   function s:setupWrapping()
     set wrap
@@ -280,6 +281,7 @@ if !exists('*s:setupWrapping')
   endfunction
 endif
 
+" Function to compile PDF from .tex files
 function! SaveAndCompile()
     " Save file
     :w
