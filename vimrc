@@ -266,6 +266,7 @@ nnoremap <silent> <leader>sh :terminal<CR>
 "*****************************************************************************
 "" Commands
 "*****************************************************************************
+
 " remove trailing whitespaces
 command! FixWhitespace :%s/\s\+$//e
 
@@ -301,6 +302,7 @@ nnoremap <leader>pdf :call SaveAndCompile()<CR>
 "*****************************************************************************
 "" Autocmd Rules
 "*****************************************************************************
+ 
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
   autocmd!
@@ -323,6 +325,12 @@ augroup END
 augroup vimrc-wrapping
   autocmd!
   autocmd BufRead,BufNewFile *.wiki call s:setupWrapping()
+augroup END
+
+"" md from GitHub CLI
+augroup vimrc-wrapping
+  autocmd!
+  autocmd BufRead,BufNewFile *.md call s:setupWrapping()
 augroup END
 
 "" make/cmake
