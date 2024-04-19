@@ -52,7 +52,7 @@ Plug 'tpope/vim-rhubarb' " required by fugitive to :GBrowse
 Plug 'morhetz/gruvbox'
 Plug 'vimwiki/vimwiki'
 Plug 'hashivim/vim-terraform'
-Plug 'junegunn/vim-easy-align' " gai=
+Plug 'junegunn/vim-easy-align' " ga=
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -317,7 +317,7 @@ augroup END
 "" Here you can set the file type to wrapping 
 augroup vimrc-wrapping
   autocmd!
-  autocmd BufRead,BufNewFile *.txt, *.wiki, *.md call s:setupWrapping()
+  autocmd BufRead,BufNewFile *.txt,*.wiki,*.md call s:setupWrapping()
 augroup END
 
 "" make/cmake
@@ -480,7 +480,9 @@ hi SpellBad    ctermfg=015      ctermbg=000     cterm=none      guifg=#FFFFFF   
 " Move between words misspelling
 nnoremap <C-n> ]s
 nnoremap <C-p> [s
-nnoremap <C-s> z=
+
+" Toggle suggestion words
+nnoremap <C-s> z= 
 
 " To add a new word into dictionary, you can use 'zg' 
 
