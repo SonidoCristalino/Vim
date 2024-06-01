@@ -457,6 +457,9 @@ vnoremap K :m '<-2<CR>gv=gv
 "" Open current line on GitHub
 " nnoremap <Leader>o :.GBrowse<CR>
 
+"" To search and replace in selected block
+" Select your text in visual mode, and then press ":" and enter "s/hello/world/g"
+
 "*****************************************************************************
 "" Spell checking 
 "*****************************************************************************
@@ -581,3 +584,4 @@ endfunction
 " Vimwiki: TOC functions 
 nmap <silent> <leader>to :VimwikiTOC<CR>
 let g:vimwiki_toc_header = 'Contenido'
+
