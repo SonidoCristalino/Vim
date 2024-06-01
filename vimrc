@@ -53,6 +53,7 @@ Plug 'morhetz/gruvbox'
 Plug 'vimwiki/vimwiki'
 Plug 'hashivim/vim-terraform'
 Plug 'junegunn/vim-easy-align' " ga=
+Plug 'BurntSushi/ripgrep'
 
 if isdirectory('/usr/local/opt/fzf')
   Plug '/usr/local/opt/fzf' | Plug 'junegunn/fzf.vim'
@@ -401,6 +402,10 @@ let g:UltiSnipsEditSplit="vertical"
 
 " ale
 let g:ale_linters = {}
+
+" To use VWS without delete BufRead when open with :lopen
+let g:ale_pattern_options = {
+    \ '.*\.wiki$': {'ale_enabled': 0}}
 
 " Tagbar
 nmap <silent> <leader>tag :TagbarToggle<CR>
