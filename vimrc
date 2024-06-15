@@ -590,3 +590,16 @@ endfunction
 nmap <silent> <leader>to :VimwikiTOC<CR>
 let g:vimwiki_toc_header = 'Contenido'
 
+"*****************************************************************************
+"" Annotations: Function to call the annotation file
+"*****************************************************************************
+
+" Function to open annotation file in horizontal split. You should close this
+" file with ":x" or ":w"
+function! OpenAnotaciones()
+    botright split /home/emiliano/Documents/Anotaciones.wiki
+endfunction
+
+" Map the function to shortkey
+nnoremap <silent> <leader>p :call OpenAnotaciones()<CR>
+
