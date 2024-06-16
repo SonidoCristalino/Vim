@@ -597,7 +597,7 @@ let g:vimwiki_toc_header = 'Contenido'
 " Function to open annotation file in horizontal split. You should close this
 " file with ":x" or ":w"
 function! OpenAnotaciones()
-    botright split /home/emiliano/Documents/Anotaciones.wiki
+    botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
 endfunction
 
 " Map the function to shortkey
