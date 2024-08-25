@@ -329,6 +329,12 @@ augroup vimrc-make-cmake
   autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
+" Define a shortkey to search into wiki files
+augroup vimwiki_search_mapping
+  autocmd!
+  autocmd FileType vimwiki nnoremap <buffer> <F5> :VWS 
+augroup END
+
 set autoread
 
 "*****************************************************************************
@@ -594,12 +600,43 @@ let g:vimwiki_toc_header = 'Contenido'
 "" Annotations: Function to call the annotation file
 "*****************************************************************************
 
-" Function to open annotation file in horizontal split. You should close this
-" file with ":x" or ":w"
-function! OpenAnotaciones()
-    botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+" " Function to open annotation file in horizontal split. You should close this
+" " file with ":x" or ":w"
+" function! OpenAnotaciones()
+"     botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+" endfunction
+
+" " Map the function to shortkey
+" nnoremap <silent> <leader>p :call OpenAnotaciones()<CR>
+
+function! ToggleAnotaciones()
+    " Obtener el número del buffer que contiene el archivo Anotaciones_diarias.wiki
+    let l:buf = bufnr('/home/emiliano/vimwiki/Anotaciones_diarias.wiki')
+
+    if l:buf > 0
+        " Obtener la lista de ventanas que muestran el buffer
+        let l:winid = bufwinnr(l:buf)
+        
+        if l:winid != -1
+            " Cambiar a la ventana que muestra el buffer específico
+            execute l:winid . 'wincmd w'
+            
+            " Verificar si hay cambios no guardados y guardar si es necesario
+            if &modifiable && getbufvar(l:buf, '&modified')
+                execute 'write'
+            endif
+            
+            " Cerrar la ventana actual
+            execute 'close'
+        else
+            " Si no hay ventana visible, simplemente abrirlo
+            botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+        endif
+    else
+        " Si el buffer no existe, abrir el archivo
+        botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+    endif
 endfunction
 
-" Map the function to shortkey
-nnoremap <silent> <leader>p :call OpenAnotaciones()<CR>
-
+" Mapear la función a la combinación de teclas
+nnoremap <silent> <leader>p :call ToggleAnotaciones()<CR>
