@@ -611,7 +611,7 @@ let g:vimwiki_toc_header = 'Contenido'
 
 function! ToggleAnotaciones()
     " Obtener el número del buffer que contiene el archivo Anotaciones_diarias.wiki
-    let l:buf = bufnr('/home/emiliano/vimwiki/Anotaciones_diarias.wiki')
+    let l:buf = bufnr('~/vimwiki/Anotaciones_diarias.wiki')
 
     if l:buf > 0
         " Obtener la lista de ventanas que muestran el buffer
@@ -630,11 +630,11 @@ function! ToggleAnotaciones()
             execute 'close'
         else
             " Si no hay ventana visible, simplemente abrirlo
-            botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+            botright split ~/vimwiki/Anotaciones_diarias.wiki
         endif
     else
         " Si el buffer no existe, abrir el archivo
-        botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
+        botright split ~/vimwiki/Anotaciones_diarias.wiki
     endif
 endfunction
 
