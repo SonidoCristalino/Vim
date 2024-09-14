@@ -319,7 +319,7 @@ augroup END
 "" Here you can set the file type to wrapping 
 augroup vimrc-wrapping
   autocmd!
-  autocmd BufRead,BufNewFile *.txt,*.wiki,*.md call s:setupWrapping()
+  autocmd BufRead,BufNewFile *.txt,*.wiki,*.tex,*.md call s:setupWrapping()
 augroup END
 
 "" make/cmake
