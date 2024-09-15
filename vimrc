@@ -295,7 +295,7 @@ function! SaveAndCompile()
     silent execute '!pdflatex ' . filename . '.tex'
 
     " Remove useless files after compile
-    :!rm *.aux *.log
+    :!rm *.aux *.log *.toc
 endfunction
 
 nnoremap <leader>pdf :call SaveAndCompile()<CR>
