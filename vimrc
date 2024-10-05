@@ -466,6 +466,9 @@ vmap > >gv
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
+"" Create a vimwiki table into file
+nnoremap <C-t> :VimwikiTable 3 4<CR>
+
 "" Open current line on GitHub
 " nnoremap <Leader>o :.GBrowse<CR>
 
