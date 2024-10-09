@@ -430,8 +430,9 @@ if has('unnamedplus')
 endif
 
 noremap YY "+y<CR>
-noremap <leader>p "+gP<CR>
 noremap XX "+x<CR>
+" We comment on the following line because it conflicts with the opening of our annotation file.
+" noremap <leader>p "+gP<CR> 
 
 if has('macunix')
   " pbcopy for OSX copy/paste
