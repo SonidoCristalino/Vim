@@ -605,15 +605,6 @@ let g:vimwiki_toc_header = 'Contenido'
 "" Annotations: Function to call the annotation file
 "*****************************************************************************
 
-" " Function to open annotation file in horizontal split. You should close this
-" " file with ":x" or ":w"
-" function! OpenAnotaciones()
-"     botright split /home/emiliano/vimwiki/Anotaciones_diarias.wiki
-" endfunction
-
-" " Map the function to shortkey
-" nnoremap <silent> <leader>p :call OpenAnotaciones()<CR>
-
 function! ToggleAnotaciones()
     " Obtener el número del buffer que contiene el archivo Anotaciones_diarias.wiki
     let l:buf = bufnr('~/vimwiki/Anotaciones_diarias.wiki')
