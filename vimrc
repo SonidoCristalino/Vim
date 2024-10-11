@@ -575,7 +575,7 @@ xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
-" To align a whole file content you can do this: 
+" To indent a whole file content you can do this: 
 " So, gg to get the start of the file, = to indent, G to the end of the file, gg=G
 
 "*****************************************************************************
