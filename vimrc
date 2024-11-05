@@ -592,6 +592,9 @@ function! VimwikiLinkHandler(link)
   elseif link =~ '^google:'
     let browser = 'google-chrome'
     let link = substitute(link, '^google:', '', '')
+  elseif link =~ '^vieb:'
+    let browser = 'vieb'
+    let link = substitute(link, '^vieb:', '', '')
   else
     return 0
   endif
