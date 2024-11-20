@@ -495,7 +495,7 @@ endfunction
 nnoremap <leader>spell :call ToggleSpellCheck()<CR>
 
 "" Activate spell highlight
-hi SpellBad    ctermfg=015      ctermbg=000     cterm=none      guifg=#FFFFFF   guibg=#000000   gui=none
+hi SpellBad ctermfg=1 guibg=#FF0000 gui=underline 
 
 " Move between words misspelling
 nnoremap <C-n> ]s
