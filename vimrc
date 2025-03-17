@@ -644,3 +644,14 @@ endfunction
 
 " Mapear la función a la combinación de teclas
 nnoremap <silent> <leader>p :call ToggleAnotaciones()<CR>
+
+" Permite agregar 5 líneas vacías desde donde se encuentra el cursor
+function! InsertFiveEmptyLines()
+  let current_line = line('.')
+  for i in range(5)
+    call append(current_line, '')
+  endfor
+  call cursor(current_line, col('.'))
+endfunction
+
+nnoremap <C-Space> :call InsertFiveEmptyLines()<CR>
