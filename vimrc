@@ -654,4 +654,4 @@ function! InsertFiveEmptyLines()
   call cursor(current_line, col('.'))
 endfunction
 
-nnoremap <C-Space> :call InsertFiveEmptyLines()<CR>
+nnoremap <A-Space> :call InsertFiveEmptyLines()<CR>
