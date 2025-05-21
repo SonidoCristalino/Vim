@@ -495,7 +495,8 @@ endfunction
 nnoremap <leader>spell :call ToggleSpellCheck()<CR>
 
 "" Activate spell highlight
-hi SpellBad ctermfg=1 guibg=#FF0000 gui=underline 
+" hi SpellBad ctermfg=1 guibg=#FF0000 gui=underline 
+hi SpellBad ctermfg=1 guibg=#FFA500 gui=underline 
 
 " Move between words misspelling
 nnoremap <C-n> ]s
@@ -513,6 +514,13 @@ nnoremap <C-s> z=
 " c
 autocmd FileType c setlocal tabstop=4 shiftwidth=4 expandtab
 autocmd FileType cpp setlocal tabstop=4 shiftwidth=4 expandtab
+
+" YAML
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
+let g:ale_lint_on_text_changed = 'never'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -655,3 +663,65 @@ function! InsertFiveEmptyLines()
 endfunction
 
 nnoremap <A-Space> :call InsertFiveEmptyLines()<CR>
+
+
+"*****************************************************************************
+"" SaveDraft : Function to save the annotation file
+"*****************************************************************************
+
+" Script to save temporary draft files to a permanent location
+" Mapped to <leader>sd (save draft) in normal mode
+
+function! SaveDraft()
+    " Get the full path of the current file
+    let l:current_file = expand('%:p')
+
+    " Regex pattern to identify temporary draft files
+    " Assumes temporary drafts are in /tmp/ and follow the MM-DD-HHMM_RANDOM.wiki format
+    " e.g., /tmp/05-21-1446_20965.wiki
+    " Using \d\+ for flexibility (one or more digits)
+    let l:pattern = "^/tmp/\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
+
+    " Check if the current file matches the temporary draft pattern
+    if l:current_file =~# l:pattern
+        " Extract only the filename (e.g., 05-21-1446_20965.wiki)
+        let l:filename = fnamemodify(l:current_file, ':t')
+
+        " Prompt the user to choose the destination directory (1 or 2)
+        let l:choice_num = input('Save to (1. Wazuh / 2. Personal)? ', '1')
+
+        let l:save_dir = ''
+        if l:choice_num == '1'
+            let l:save_dir = '~/vimwiki/Wazuh/Anotaciones'
+        elseif l:choice_num == '2'
+            let l:save_dir = '~/vimwiki/AnotacionesPersonales'
+        else
+            echomsg "Invalid option (must be 1 or 2). Draft will not be saved."
+            return
+        endif
+
+        " Create the destination directory if it doesn't exist
+        if !isdirectory(l:save_dir)
+            echomsg "Creating directory: " . l:save_dir
+            call system('mkdir -p ' . shellescape(l:save_dir))
+        endif
+
+        " Construct the full destination path
+        let l:destination_path = l:save_dir . '/' . l:filename
+        echomsg "Final destination path: " . l:destination_path
+
+        " Save the current buffer to the destination path
+        try
+            exe 'write ' . l:destination_path
+            echomsg "Draft saved to: " . l:destination_path
+        catch /E212:/
+            echomsg "Error saving file: " . v:exception
+        endtry
+    else
+        echomsg "Current file (" . l:current_file . ") does NOT appear to be a temporary draft."
+    endif
+endfunction
+
+" Map the function to <leader>sd (save draft) in normal mode
+nnoremap <leader>sd :call SaveDraft()<CR>
+
