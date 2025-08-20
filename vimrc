@@ -653,6 +653,9 @@ endfunction
 " Mapear la función a la combinación de teclas
 nnoremap <silent> <leader>p :call ToggleAnotaciones()<CR>
 
+"*****************************************************************************
+"" InsertLines : Function to insert empty lines
+"*****************************************************************************
 " Permite agregar 5 líneas vacías desde donde se encuentra el cursor
 function! InsertFiveEmptyLines()
   let current_line = line('.')
@@ -662,7 +665,9 @@ function! InsertFiveEmptyLines()
   call cursor(current_line, col('.'))
 endfunction
 
-nnoremap <A-Space> :call InsertFiveEmptyLines()<CR>
+" gnome-terminal: try not use alt+space because this keybinding is catching by
+" terminal
+nnoremap <leader>l :call InsertFiveEmptyLines()<CR>
 
 "*****************************************************************************
 "" SaveDraft : Function to save the annotation file
@@ -676,9 +681,6 @@ function! SaveDraft()
     let l:current_file = expand('%:p')
 
     " Regex pattern to identify temporary draft files
-    " Assumes temporary drafts are in /tmp/ and follow the MM-DD-YYYY-HHMM_RANDOM.wiki format
-    " e.g., /tmp/08-19-2025-1932_15684.wiki
-    " Using \d\+ for flexibility (one or more digits)
     let l:pattern = "^/tmp/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
 
     " Check if the current file matches the temporary draft pattern
