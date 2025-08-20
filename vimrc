@@ -664,7 +664,6 @@ endfunction
 
 nnoremap <A-Space> :call InsertFiveEmptyLines()<CR>
 
-
 "*****************************************************************************
 "" SaveDraft : Function to save the annotation file
 "*****************************************************************************
@@ -677,10 +676,10 @@ function! SaveDraft()
     let l:current_file = expand('%:p')
 
     " Regex pattern to identify temporary draft files
-    " Assumes temporary drafts are in /tmp/ and follow the MM-DD-HHMM_RANDOM.wiki format
-    " e.g., /tmp/05-21-1446_20965.wiki
+    " Assumes temporary drafts are in /tmp/ and follow the MM-DD-YYYY-HHMM_RANDOM.wiki format
+    " e.g., /tmp/08-19-2025-1932_15684.wiki
     " Using \d\+ for flexibility (one or more digits)
-    let l:pattern = "^/tmp/\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
+    let l:pattern = "^/tmp/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
 
     " Check if the current file matches the temporary draft pattern
     if l:current_file =~# l:pattern
@@ -708,15 +707,27 @@ function! SaveDraft()
 
         " Construct the full destination path
         let l:destination_path = l:save_dir . '/' . l:filename
-        echomsg "Final destination path: " . l:destination_path
+        " echomsg "  Destination Path: " . l:destination_path
 
-        " Save the current buffer to the destination path
-        try
-            exe 'write ' . l:destination_path
-            echomsg "Draft saved to: " . l:destination_path
-        catch /E212:/
-            echomsg "Error saving file: " . v:exception
-        endtry
+        " Check if the destination file already exists
+        if filereadable(l:destination_path)
+            let l:confirm = input("Destination file already exists. Overwrite? (y/n): ", "n")
+            if l:confirm =~? '^y'
+                " Get the content of the current buffer
+                let l:buffer_content = getbufline('%', 1, '$')
+                " Overwrite the file using writefile()
+                call writefile(l:buffer_content, l:destination_path)
+                echomsg " Draft saved to: " . l:destination_path
+            else
+                echomsg "Save canceled by user. File was not overwritten."
+            endif
+        else
+            " Get the content of the current buffer
+            let l:buffer_content = getbufline('%', 1, '$')
+            " If the file does not exist, save it normally using writefile()
+            call writefile(l:buffer_content, l:destination_path)
+            echomsg " Draft saved to: " . l:destination_path
+        endif
     else
         echomsg "Current file (" . l:current_file . ") does NOT appear to be a temporary draft."
     endif
@@ -724,4 +735,3 @@ endfunction
 
 " Map the function to <leader>sd (save draft) in normal mode
 nnoremap <leader>sd :call SaveDraft()<CR>
-
