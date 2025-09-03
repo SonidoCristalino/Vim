@@ -689,22 +689,19 @@ function! SaveDraft()
         let l:filename = fnamemodify(l:current_file, ':t')
 
         " Prompt the user to choose the destination directory (1 or 2)
-        let l:choice_num = input('Save to (1. Wazuh / 2. Personal)? ', '1')
+        " Updated prompt to "Personal" and "Laboral"
+        let l:choice_num = input('Save to (1. Personal / 2. Laboral)? ', '1')
 
         let l:save_dir = ''
         if l:choice_num == '1'
-            let l:save_dir = '~/vimwiki/Wazuh/Anotaciones'
+            " Path for Personal notes
+            let l:save_dir = '/home/emiliano/vimwiki/AnotacionesPersonales'
         elseif l:choice_num == '2'
-            let l:save_dir = '~/vimwiki/AnotacionesPersonales'
+            " Updated path for Laboral notes
+            let l:save_dir = '/home/emiliano/vimwiki/TrabajoRemoto/AnotacionesLaborales'
         else
             echomsg "Invalid option (must be 1 or 2). Draft will not be saved."
             return
-        endif
-
-        " Create the destination directory if it doesn't exist
-        if !isdirectory(l:save_dir)
-            echomsg "Creating directory: " . l:save_dir
-            call system('mkdir -p ' . shellescape(l:save_dir))
         endif
 
         " Construct the full destination path
