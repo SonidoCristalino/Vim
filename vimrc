@@ -734,3 +734,6 @@ endfunction
 
 " Map the function to <leader>sd (save draft) in normal mode
 nnoremap <leader>sd :call SaveDraft()<CR>
+
+" Use diary template 
+au BufNewFile ~/vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
