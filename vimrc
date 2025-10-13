@@ -334,6 +334,9 @@ augroup END
 augroup vimwiki_search_mapping
   autocmd!
   autocmd FileType vimwiki nnoremap <buffer> <F5> :VWS 
+  
+  " Center screen when follow a link
+  autocmd FileType vimwiki nnoremap <buffer> <CR> <Plug>VimwikiFollowLink<CR>zz
 augroup END
 
 set autoread
@@ -737,3 +740,4 @@ nnoremap <leader>sd :call SaveDraft()<CR>
 
 " Use diary template 
 au BufNewFile ~/vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
+
