@@ -654,7 +654,7 @@ function! ToggleAnotaciones()
 endfunction
 
 " Mapear la función a la combinación de teclas
-nnoremap <silent> <leader>p :call ToggleAnotaciones()<CR>
+" nnoremap <silent> <leader>p :call ToggleAnotaciones()<CR>
 
 "*****************************************************************************
 "" InsertLines : Function to insert empty lines
