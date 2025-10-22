@@ -617,6 +617,7 @@ function! VimwikiLinkHandler(link)
 endfunction
 
 " Vimwiki: TOC functions 
+let g:vimwiki_emoji_enable = 1
 nmap <silent> <leader>to :VimwikiTOC<CR>
 let g:vimwiki_toc_header = 'Contenido'
 
