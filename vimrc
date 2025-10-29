@@ -275,10 +275,21 @@ command! FixWhitespace :%s/\s\+$//e
 "" Functions
 "*****************************************************************************
 
+" if !exists('*s:setupWrapping')
+"   function s:setupWrapping()
+"     set wrap
+"     set wm=2
+"     set textwidth=110
+"   endfunction
+" endif
+
 if !exists('*s:setupWrapping')
   function s:setupWrapping()
     set wrap
     set wm=2
+  endfunction
+
+  function s:setupTextwidth()
     set textwidth=110
   endfunction
 endif
@@ -318,9 +329,17 @@ augroup vimrc-remember-cursor-position
 augroup END
 
 "" Here you can set the file type to wrapping 
+" augroup vimrc-wrapping
+"   autocmd!
+"   autocmd BufRead,BufNewFile *.txt,*.wiki,*.tex,*.md call s:setupWrapping()
+" augroup END
+
 augroup vimrc-wrapping
   autocmd!
-  autocmd BufRead,BufNewFile *.txt,*.wiki,*.tex,*.md call s:setupWrapping()
+  " Aplica SÓLO el soft-wrap a .wiki y .md
+  autocmd BufRead,BufNewFile *.wiki,*.md call s:setupWrapping() 
+  " Aplica soft-wrap Y hard-wrap a .txt y .tex
+  autocmd BufRead,BufNewFile *.txt,*.tex call s:setupWrapping() | call s:setupTextwidth()
 augroup END
 
 "" make/cmake
