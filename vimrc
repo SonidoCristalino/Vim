@@ -761,3 +761,8 @@ nnoremap <leader>sd :call SaveDraft()<CR>
 " Use diary template 
 au BufNewFile ~/vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
 
+" Mapea la selección visual de una tabla markdown a una multilinea
+vnoremap <Leader>pm :!pandoc -f markdown+multiline_tables -t markdown<CR>
+
+" Mapea la selección visual para formatear títulos de listas (Bullet* :Texto)
+vnoremap <Leader>vi :s/^\(\s*[-*]\s*\)\(\S.\{-}\)\ze:/\1*\2*/g<CR>
