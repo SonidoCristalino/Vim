@@ -635,10 +635,23 @@ function! VimwikiLinkHandler(link)
   return 1
 endfunction
 
+"*****************************************************************************
+
 " Vimwiki: TOC functions 
 let g:vimwiki_emoji_enable = 1
 nmap <silent> <leader>to :VimwikiTOC<CR>
 let g:vimwiki_toc_header = 'Contenido'
+
+
+" Define vimwiki markdown path implementation. 
+" /tmp/ directory is for annotations files
+let g:vimwiki_list = [
+  \ {'path': '/tmp/',
+  \  'syntax': 'markdown',
+  \  'ext': '.md',
+  \  'auto_tags': 0,
+  \  'auto_diary_link': 0}
+\]
 
 "*****************************************************************************
 "" Annotations: Function to call the annotation file
@@ -764,5 +777,8 @@ au BufNewFile ~/vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-dia
 " Mapea la selección visual de una tabla markdown a una multilinea
 vnoremap <Leader>pm :!pandoc -f markdown+multiline_tables -t markdown<CR>
 
-" Mapea la selección visual para formatear títulos de listas (Bullet* :Texto)
-vnoremap <Leader>vi :s/^\(\s*[-*]\s*\)\(\S.\{-}\)\ze:/\1*\2*/g<CR>
+" Mapea la selección visual para formatear títulos de listas en cursiva (un sólo asterisco)  
+" vnoremap <Leader>vi :s/^\(\s*[-*]\s*\)\(\S.\{-}\)\ze:/\1*\2*/g<CR>
+
+" Mapea la selección visual para formatear títulos de listas en negrita (con dos asteriscos)
+vnoremap <Leader>vi :s/^\(\s*[-*]\s*\)\(\S.\{-}\)\ze:/\1**\2**/g<CR>
