@@ -328,12 +328,6 @@ augroup vimrc-remember-cursor-position
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
-"" Here you can set the file type to wrapping 
-" augroup vimrc-wrapping
-"   autocmd!
-"   autocmd BufRead,BufNewFile *.txt,*.wiki,*.tex,*.md call s:setupWrapping()
-" augroup END
-
 augroup vimrc-wrapping
   autocmd!
   " Aplica SÓLO el soft-wrap a .wiki y .md
@@ -642,16 +636,34 @@ let g:vimwiki_emoji_enable = 1
 nmap <silent> <leader>to :VimwikiTOC<CR>
 let g:vimwiki_toc_header = 'Contenido'
 
+" Desactiva el menú gráfico (solución al error E330 y mejora de performance)
+let g:vimwiki_menu = ''
 
-" Define vimwiki markdown path implementation. 
-" /tmp/ directory is for annotations files
+" Evita que Vimwiki secuestre archivos markdown fuera de las rutas definidas
+let g:vimwiki_global_ext = 0
+
+" Mapear explícitamente extensiones a formatos
+let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.wiki': 'default'}
+
+" Modificación para poder implementar vimwiki en las notas temporales
 let g:vimwiki_list = [
-  \ {'path': '/tmp/',
+  \ {'path': '/home/emiliano/vimwiki',
+  \  'name': 'WikiPersonal',
+  \  'syntax': 'default',
+  \  'ext': '.wiki'},
+  \ {'path': '/tmp/mis_notas/',
+  \  'name': 'WikiTemporal',
   \  'syntax': 'markdown',
   \  'ext': '.md',
   \  'auto_tags': 0,
   \  'auto_diary_link': 0}
 \]
+
+" Función que permite que se pueda trabajar mediante vimwiki con el formato de markdown
+augroup vimwiki_temp_fix
+    autocmd!
+    autocmd BufRead,BufNewFile /tmp/mis_notas/*.md let b:vimwiki_wiki_nr = 1 | let b:vimwiki_syntax = 'markdown' | set filetype=vimwiki
+augroup END
 
 "*****************************************************************************
 "" Annotations: Function to call the annotation file
