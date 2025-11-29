@@ -729,7 +729,7 @@ function! SaveDraft()
     let l:current_file = expand('%:p')
 
     " Regex pattern to identify temporary draft files
-    let l:pattern = "^/tmp/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
+    let l:pattern = "^/tmp/mis_notas/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.md$"
 
     " Check if the current file matches the temporary draft pattern
     if l:current_file =~# l:pattern
