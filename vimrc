@@ -608,25 +608,31 @@ nmap ga <Plug>(EasyAlign)
 "" Vimwiki: Handling external browser 
 "*****************************************************************************
 
-" A function is defined to open the Internet links in alternative browsers just
-" put before the browser name.
+" Función para abrir links en navegadores y perfiles específicos
 function! VimwikiLinkHandler(link)
-  let link = a:link
-  if link =~ '^firefox:'
-    let browser = 'firefox'
-    let link = substitute(link, '^firefox:', '', '')
-  elseif link =~ '^google:'
-    let browser = 'google-chrome'
-    let link = substitute(link, '^google:', '', '')
-  elseif link =~ '^vieb:'
-    let browser = 'vieb'
-    let link = substitute(link, '^vieb:', '', '')
-  else
-    return 0
-  endif
+    let link = a:link
 
-  execute '!'.browser.' '.link.' >/dev/null 2>&1 &'
-  return 1
+    " Identificamos el navegador y el perfil
+    if link =~ '^work:'
+        let browser = 'google-chrome --profile-directory="Profile 5"'
+        let link = substitute(link, '^work:', '', '')
+    elseif link =~ '^google:'
+        let browser = 'google-chrome --profile-directory="Profile 1"'
+        let link = substitute(link, '^google:', '', '')
+    elseif link =~ '^firefox:'
+        let browser = 'firefox'
+        let link = substitute(link, '^firefox:', '', '')
+    elseif link =~ '^vieb:'
+        let browser = 'vieb'
+        let link = substitute(link, '^vieb:', '', '')
+    else
+        return 0
+    endif
+
+    " El uso de shellescape() es la clave: 
+    " Envuelve la URL en comillas simples y escapa caracteres peligrosos automáticamente.
+    execute "!".browser." ".shellescape(link)." >/dev/null 2>&1 &"
+    return 1
 endfunction
 
 "*****************************************************************************
@@ -645,18 +651,29 @@ let g:vimwiki_global_ext = 0
 " Mapear explícitamente extensiones a formatos
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.wiki': 'default'}
 
-" Modificación para poder implementar vimwiki en las notas temporales
+" Agregamos 3 nuevas wikis para tener separado lo Personal con lo Laboral
 let g:vimwiki_list = [
-  \ {'path': '/home/emiliano/vimwiki',
-  \  'name': 'WikiPersonal',
-  \  'syntax': 'default',
-  \  'ext': '.wiki'},
-  \ {'path': '/tmp/mis_notas/',
-  \  'name': 'WikiTemporal',
-  \  'syntax': 'markdown',
-  \  'ext': '.md',
-  \  'auto_tags': 0,
-  \  'auto_diary_link': 0}
+    \ {
+    \   'path': '~/.vimwiki/',
+    \   'name': 'Personal',
+    \   'syntax': 'markdown',
+    \   'ext': '.wiki'
+    \ },
+    \ { 'path': '~/.vimwiki_laboral/',
+    \   'name': 'Laboral',
+    \   'syntax': 'markdown',
+    \   'ext': '.wiki',
+    \   'auto_tags': 0,
+    \   'auto_diary_link': 0
+    \ },
+    \ {
+    \   'path': '/tmp/mis_notas/',
+    \   'name': 'WikiTemporal',
+    \   'syntax': 'markdown',
+    \   'ext': '.wiki',
+    \   'auto_tags': 0,
+    \   'auto_diary_link': 0
+    \ }
 \]
 
 " Función que permite que se pueda trabajar mediante vimwiki con el formato de markdown
@@ -664,6 +681,20 @@ augroup vimwiki_temp_fix
     autocmd!
     autocmd BufRead,BufNewFile /tmp/mis_notas/*.md let b:vimwiki_wiki_nr = 1 | let b:vimwiki_syntax = 'markdown' | set filetype=vimwiki
 augroup END
+
+" Función para pasar de "=" a "#" para los headers
+function! ConvertirVimwikiAMarkdown()
+    " El flag 'e' evita que Vim se queje si no encuentra algún nivel de encabezado
+    silent! %s/^\s*======\s\(.*\)\s======\s*$/###### \1/ge
+    silent! %s/^\s*====\s\(.*\)\s====\s*$/#### \1/ge
+    silent! %s/^\s*===\s\(.*\)\s===\s*$/### \1/ge
+    silent! %s/^\s*==\s\(.*\)\s==\s*$/## \1/ge
+    silent! %s/^\s*=\s\(.*\)\s=\s*$/# \1/ge
+    echo "Encabezados convertidos a Markdown"
+endfunction
+
+" Creamos un comando personalizado para llamar a la función
+command! FixHeaders call ConvertirVimwikiAMarkdown()
 
 "*****************************************************************************
 "" Annotations: Function to call the annotation file
