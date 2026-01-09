@@ -275,25 +275,6 @@ command! FixWhitespace :%s/\s\+$//e
 "" Functions
 "*****************************************************************************
 
-" if !exists('*s:setupWrapping')
-"   function s:setupWrapping()
-"     set wrap
-"     set wm=2
-"     set textwidth=110
-"   endfunction
-" endif
-
-if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-  endfunction
-
-  function s:setupTextwidth()
-    set textwidth=110
-  endfunction
-endif
-
 " Function to compile PDF from .tex files
 function! SaveAndCompile()
     " Save file
@@ -330,10 +311,11 @@ augroup END
 
 augroup vimrc-wrapping
   autocmd!
-  " Aplica SÓLO el soft-wrap a .wiki y .md
-  autocmd BufRead,BufNewFile *.wiki,*.md call s:setupWrapping() 
-  " Aplica soft-wrap Y hard-wrap a .txt y .tex
-  autocmd BufRead,BufNewFile *.txt,*.tex call s:setupWrapping() | call s:setupTextwidth()
+  " Notas: Soft-wrap y Hard-wrap a 150 caracteres
+  autocmd BufRead,BufNewFile *.wiki,*.md,*.tex setlocal wrap wm=2 textwidth=150
+  
+  " Archivos técnicos: Soft-wrap y Hard-wrap a 110 caracteres
+  autocmd BufRead,BufNewFile *.txt, setlocal wrap wm=2 textwidth=110
 augroup END
 
 "" make/cmake
@@ -612,16 +594,36 @@ nmap ga <Plug>(EasyAlign)
 function! VimwikiLinkHandler(link)
     let link = a:link
 
-    " Identificamos el navegador y el perfil
+    " 1. Lógica para abrir archivos locales exactamente como se escriben (vfile:)
+    if link =~# '^vfile:'
+        " Quitamos el prefijo 'vfile:'
+        let l:raw_path = substitute(link, '^vfile:', '', '')
+        
+        " Expandimos ~ y variables de entorno para obtener la ruta absoluta real
+        let l:full_path = expand(l:raw_path)
+        
+        " Si la ruta es relativa, la unimos al directorio del archivo actual
+        if l:full_path !~ '^/.*'
+            let l:full_path = expand('%:p:h') . '/' . l:full_path
+        endif
+
+        if filereadable(l:full_path) || isdirectory(l:full_path)
+            execute 'tabnew ' . fnameescape(l:full_path)
+            return 1
+        else
+            echomsg 'Vimwiki Error: El archivo no existe en ' . l:full_path
+            return 0
+        endif
+    endif
+
+    " 2. Lógica para navegadores (Chrome Profiles y Vieb)
+    let browser = ''
     if link =~ '^work:'
         let browser = 'google-chrome --profile-directory="Profile 5"'
         let link = substitute(link, '^work:', '', '')
     elseif link =~ '^google:'
         let browser = 'google-chrome --profile-directory="Profile 1"'
         let link = substitute(link, '^google:', '', '')
-    elseif link =~ '^firefox:'
-        let browser = 'firefox'
-        let link = substitute(link, '^firefox:', '', '')
     elseif link =~ '^vieb:'
         let browser = 'vieb'
         let link = substitute(link, '^vieb:', '', '')
@@ -629,8 +631,6 @@ function! VimwikiLinkHandler(link)
         return 0
     endif
 
-    " El uso de shellescape() es la clave: 
-    " Envuelve la URL en comillas simples y escapa caracteres peligrosos automáticamente.
     execute "!".browser." ".shellescape(link)." >/dev/null 2>&1 &"
     return 1
 endfunction
@@ -815,7 +815,7 @@ endfunction
 nnoremap <leader>sd :call SaveDraft()<CR>
 
 " Use diary template 
-au BufNewFile ~/vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
+au BufNewFile ~/.vimwiki/diary/*.wiki :silent 0r !~/.vim/bin/generate-vimwiki-diary-template '%'
 
 " Mapea la selección visual de una tabla markdown a una multilinea
 vnoremap <Leader>pm :!pandoc -f markdown+multiline_tables -t markdown<CR>
