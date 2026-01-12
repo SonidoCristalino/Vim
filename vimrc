@@ -774,10 +774,10 @@ function! SaveDraft()
         let l:save_dir = ''
         if l:choice_num == '1'
             " Path for Personal notes
-            let l:save_dir = '/home/emiliano/vimwiki/AnotacionesPersonales'
+            let l:save_dir = '/home/emiliano/.vimwiki/AnotacionesPersonales'
         elseif l:choice_num == '2'
             " Updated path for Laboral notes
-            let l:save_dir = '/home/emiliano/vimwiki/TrabajoRemoto/AnotacionesLaborales'
+            let l:save_dir = '/home/emiliano/.vimwiki_laboral/TrabajoRemoto/AnotacionesLaborales'
         else
             echomsg "Invalid option (must be 1 or 2). Draft will not be saved."
             return
