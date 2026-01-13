@@ -679,7 +679,7 @@ let g:vimwiki_list = [
 " Función que permite que se pueda trabajar mediante vimwiki con el formato de markdown
 augroup vimwiki_temp_fix
     autocmd!
-    autocmd BufRead,BufNewFile /tmp/mis_notas/*.md let b:vimwiki_wiki_nr = 1 | let b:vimwiki_syntax = 'markdown' | set filetype=vimwiki
+    autocmd BufRead,BufNewFile /tmp/mis_notas/*.wiki let b:vimwiki_wiki_nr = 1 | let b:vimwiki_syntax = 'markdown' | set filetype=vimwiki
 augroup END
 
 " Función para pasar de "=" a "#" para los headers
