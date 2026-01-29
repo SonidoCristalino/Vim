@@ -616,14 +616,43 @@ function! VimwikiLinkHandler(link)
         endif
     endif
 
-    " 2. Lógica para navegadores (Chrome Profiles y Vieb)
+    " " 2. Lógica para navegadores (Chrome Profiles y Vieb)
+    " let browser = ''
+    " if link =~ '^work:'
+    "     let browser = 'google-chrome --profile-directory="Profile 5"'
+    "     let link = substitute(link, '^work:', '', '')
+    " elseif link =~ '^google:'
+    "     let browser = 'google-chrome --profile-directory="Profile 1"'
+    "     let link = substitute(link, '^google:', '', '')
+    " elseif link =~ '^vieb:'
+    "     let browser = 'vieb'
+    "     let link = substitute(link, '^vieb:', '', '')
+    " else
+    "     return 0
+    " endif
+
+    " 2. Lógica para navegadores (Perfiles Aislados: Santillana, Santex y Personal)
     let browser = ''
-    if link =~ '^work:'
-        let browser = 'google-chrome --profile-directory="Profile 5"'
-        let link = substitute(link, '^work:', '', '')
+
+    " --- PROYECTO SANTILLANA ---
+    if link =~ '^santillana:'
+        " Usa el ejecutable y directorio de datos aislados que ya configuramos
+        let browser = 'chrome-santillana --user-data-dir=/home/emiliano/.config/google-chrome-santillana --class=chrome-santillana'
+        let link = substitute(link, '^santillana:', '', '')
+
+    " --- PROYECTO SANTEX ---
+    elseif link =~ '^santex:'
+        " Pre-configurado para cuando crees el directorio ~/.config/google-chrome-santex
+        let browser = 'chrome-santex --user-data-dir=/home/emiliano/.config/google-chrome-santex --class=chrome-santex'
+        let link = substitute(link, '^santex:', '', '')
+
+    " --- PERSONAL / GOOGLE ---
     elseif link =~ '^google:'
-        let browser = 'google-chrome --profile-directory="Profile 1"'
+        " Usa el perfil estándar (Profile 1) pero con el nombre de clase separado
+        let browser = 'chrome-personal --profile-directory="Profile 1" --class=chrome-personal'
         let link = substitute(link, '^google:', '', '')
+
+    " --- NAVEGADOR VIEB ---
     elseif link =~ '^vieb:'
         let browser = 'vieb'
         let link = substitute(link, '^vieb:', '', '')
@@ -760,7 +789,7 @@ function! SaveDraft()
     let l:current_file = expand('%:p')
 
     " Regex pattern to identify temporary draft files
-    let l:pattern = "^/tmp/mis_notas/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.md$"
+    let l:pattern = "^/tmp/mis_notas/\\d\\+-\\d\\+-\\d\\+-\\d\\+_\\d\\+\\.wiki$"
 
     " Check if the current file matches the temporary draft pattern
     if l:current_file =~# l:pattern
