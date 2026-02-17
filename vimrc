@@ -590,19 +590,14 @@ nmap ga <Plug>(EasyAlign)
 "" Vimwiki: Handling external browser 
 "*****************************************************************************
 
-" Función para abrir links en navegadores y perfiles específicos
 function! VimwikiLinkHandler(link)
     let link = a:link
 
-    " 1. Lógica para abrir archivos locales exactamente como se escriben (vfile:)
+    " 1. Lógica para archivos locales (vfile:)
     if link =~# '^vfile:'
-        " Quitamos el prefijo 'vfile:'
         let l:raw_path = substitute(link, '^vfile:', '', '')
-        
-        " Expandimos ~ y variables de entorno para obtener la ruta absoluta real
         let l:full_path = expand(l:raw_path)
         
-        " Si la ruta es relativa, la unimos al directorio del archivo actual
         if l:full_path !~ '^/.*'
             let l:full_path = expand('%:p:h') . '/' . l:full_path
         endif
@@ -616,40 +611,22 @@ function! VimwikiLinkHandler(link)
         endif
     endif
 
-    " " 2. Lógica para navegadores (Chrome Profiles y Vieb)
-    " let browser = ''
-    " if link =~ '^work:'
-    "     let browser = 'google-chrome --profile-directory="Profile 5"'
-    "     let link = substitute(link, '^work:', '', '')
-    " elseif link =~ '^google:'
-    "     let browser = 'google-chrome --profile-directory="Profile 1"'
-    "     let link = substitute(link, '^google:', '', '')
-    " elseif link =~ '^vieb:'
-    "     let browser = 'vieb'
-    "     let link = substitute(link, '^vieb:', '', '')
-    " else
-    "     return 0
-    " endif
-
-    " 2. Lógica para navegadores (Perfiles Aislados: Santillana, Santex y Personal)
+    " 2. Lógica para navegadores
     let browser = ''
 
     " --- PROYECTO SANTILLANA ---
     if link =~ '^santillana:'
-        " Usa el ejecutable y directorio de datos aislados que ya configuramos
-        let browser = 'chrome-santillana --user-data-dir=/home/emiliano/.config/google-chrome-santillana --class=chrome-santillana'
+        let browser = 'google-chrome --user-data-dir=/home/emiliano/.config/google-chrome-santillana --class=chrome-santillana'
         let link = substitute(link, '^santillana:', '', '')
 
     " --- PROYECTO SANTEX ---
     elseif link =~ '^santex:'
-        " Pre-configurado para cuando crees el directorio ~/.config/google-chrome-santex
-        let browser = 'chrome-santex --user-data-dir=/home/emiliano/.config/google-chrome-santex --class=chrome-santex'
+        let browser = 'google-chrome --user-data-dir=/home/emiliano/.config/google-chrome-santex --class=chrome-santex'
         let link = substitute(link, '^santex:', '', '')
 
     " --- PERSONAL / GOOGLE ---
     elseif link =~ '^google:'
-        " Usa el perfil estándar (Profile 1) pero con el nombre de clase separado
-        let browser = 'chrome-personal --profile-directory="Profile 1" --class=chrome-personal'
+        let browser = 'google-chrome --profile-directory="Profile 1" --class=chrome-personal'
         let link = substitute(link, '^google:', '', '')
 
     " --- NAVEGADOR VIEB ---
@@ -660,7 +637,15 @@ function! VimwikiLinkHandler(link)
         return 0
     endif
 
-    execute "!".browser." ".shellescape(link)." >/dev/null 2>&1 &"
+    " --- SOLUCIÓN APLICADA ---
+    " 1. 'silent': Elimina el prompt de 'Press ENTER'.
+    " 2. 'setsid': Crea una sesión nueva (independiente de la terminal).
+    " 3. '&': Lo envía a segundo plano (background).
+    silent execute "!setsid " . browser . " " . shellescape(link) . " > /dev/null 2>&1 &"
+    
+    " Redibujamos la pantalla por si quedó algún artefacto visual
+    redraw!
+    
     return 1
 endfunction
 
@@ -680,30 +665,44 @@ let g:vimwiki_global_ext = 0
 " Mapear explícitamente extensiones a formatos
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.wiki': 'default'}
 
-" Agregamos 3 nuevas wikis para tener separado lo Personal con lo Laboral
-let g:vimwiki_list = [
-    \ {
-    \   'path': '~/.vimwiki/',
-    \   'name': 'Personal',
-    \   'syntax': 'markdown',
-    \   'ext': '.wiki'
-    \ },
-    \ { 'path': '~/.vimwiki_laboral/',
-    \   'name': 'Laboral',
-    \   'syntax': 'markdown',
-    \   'ext': '.wiki',
-    \   'auto_tags': 0,
-    \   'auto_diary_link': 0
-    \ },
-    \ {
-    \   'path': '/tmp/mis_notas/',
-    \   'name': 'WikiTemporal',
-    \   'syntax': 'markdown',
-    \   'ext': '.wiki',
-    \   'auto_tags': 0,
-    \   'auto_diary_link': 0
-    \ }
-\]
+" --- Configuración Dinámica de Vimwiki ---
+let g:vimwiki_list = []
+
+" 1. WIKI PERSONAL (Fija)
+call add(g:vimwiki_list, {
+      \ 'path': '~/.vimwiki/',
+      \ 'name': 'Personal',
+      \ 'syntax': 'markdown',
+      \ 'ext': '.wiki'
+      \ })
+
+" 2. WIKIS LABORALES (Detecta carpetas en .vimwiki_laboral)
+let s:laboral_root = expand('~/.vimwiki_laboral/')
+let s:laboral_dirs = split(glob(s:laboral_root . '*/'), '\n')
+
+for s:dir in s:laboral_dirs
+    " Toma el nombre de la carpeta (Avalith, Santex, TrabajoRemoto)
+    let s:wiki_name = fnamemodify(s:dir, ':h:t')
+    
+    call add(g:vimwiki_list, {
+          \ 'path': s:dir,
+          \ 'name': s:wiki_name,
+          \ 'syntax': 'markdown',
+          \ 'ext': '.wiki',
+          \ 'auto_tags': 0,
+          \ 'auto_diary_link': 0
+          \ })
+endfor
+
+" 3. WIKI TEMPORAL (Fija)
+call add(g:vimwiki_list, {
+      \ 'path': '/tmp/mis_notas/',
+      \ 'name': 'WikiTemporal',
+      \ 'syntax': 'markdown',
+      \ 'ext': '.wiki',
+      \ 'auto_tags': 0,
+      \ 'auto_diary_link': 0
+      \ })
 
 " Función que permite que se pueda trabajar mediante vimwiki con el formato de markdown
 augroup vimwiki_temp_fix
@@ -854,3 +853,30 @@ vnoremap <Leader>pm :!pandoc -f markdown+multiline_tables -t markdown<CR>
 
 " Mapea la selección visual para formatear títulos de listas en negrita (con dos asteriscos)
 vnoremap <Leader>vi :s/^\(\s*[-*]\s*\)\(\S.\{-}\)\ze:/\1**\2**/g<CR>
+
+" ============================================================================
+"  Buscador de anotaciones de tickets
+" ============================================================================
+
+" 1. Definimos la ruta de tus anotaciones (Cámbiala aquí cuando migremos)
+let g:ruta_tickets = '/home/emiliano/.vimwiki_laboral/Remoto/AnotacionesLaborales'
+
+" 2. Comando personalizado ':Tickets' que usa FZF en esa ruta específica
+"    Esto busca por NOMBRE DE ARCHIVO (ej: SOPINF-5555)
+command! -bang -nargs=? Tickets call fzf#vim#files(g:ruta_tickets, <bang>0)
+
+" 3. Comando ':TicketsGrep' para buscar por CONTENIDO dentro de los archivos
+"    Esto es útil si no recuerdas el número de ticket pero sí una palabra clave (ej: 'nginx')
+command! -bang -nargs=* TicketsGrep
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview({'dir': g:ruta_tickets}), <bang>0)
+
+" 4. Mapeos de Teclado (Atajos Rápidos)
+
+" <leader>t -> Busca por nombre del archivo (Rápido)
+nnoremap <silent> <leader>t :Tickets<CR>
+
+" <leader>g -> Busca por contenido dentro de los tickets (Deep Search)
+nnoremap <silent> <leader>g :TicketsGrep<CR>
+
