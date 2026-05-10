@@ -406,7 +406,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsEditSplit="vertical"
 
 " ale
-let g:ale_linters = {}
+" let g:ale_linters = {}
+" Para que no analice los archivos latex y marque todo en verde los warnings
+let g:ale_linters = {'tex': [], 'latex': []}
 
 " To use VWS without delete BufRead when open with :lopen
 let g:ale_pattern_options = {
